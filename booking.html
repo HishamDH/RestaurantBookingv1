@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golden Fork Restaurant - Booking</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+  <link rel="stylesheet" href="/src/styles/booking.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-content">
+      <div class="nav-brand">
+        <span class="brand">Golden Fork</span> Restaurant
+      </div>
+      <div class="nav-actions">
+        <span id="userWelcome" class="user-welcome"></span>
+        <button id="logoutBtn" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <article class="booking">
+      <div class="hero">
+        <img src="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Restaurant Interior">
+        <div class="hero-overlay">
+          <h1>Reserve Your Table</h1>
+          <p>Experience fine dining at its best</p>
+        </div>
+      </div>
+      
+      <header class="head">
+        <h2><span class="brand">Golden Fork</span> Restaurant</h2>
+        <div class="rating">
+          <div class="stars">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+          <span class="rating-text">4.8 (324 reviews)</span>
+        </div>
+        <hr>
+      </header>
+      
+      <section class="details">
+        <div class="detail">
+          <div class="icon"><i class="fa-solid fa-location-dot"></i></div>
+          <div class="text">
+            <strong>Address:</strong><br>
+            King Fahd Road, Al Olaya District, Riyadh, Saudi Arabia
+          </div>
+        </div>
+        <div class="detail">
+          <div class="icon"><i class="fa-solid fa-clock"></i></div>
+          <div class="text">
+            <strong>Hours:</strong><br>
+            10:30 AM – 11:00 PM<br>
+            <small>Open 7 days a week</small>
+          </div>
+        </div>
+        <div class="detail">
+          <div class="icon"><i class="fa-solid fa-utensils"></i></div>
+          <div class="text">
+            <strong>Cuisine:</strong><br>
+            International, Mediterranean, Seafood
+          </div>
+        </div>
+        <div class="detail">
+          <div class="icon"><i class="fa-solid fa-users"></i></div>
+          <div class="text">
+            <strong>Capacity:</strong><br>
+            2-12 guests per table<br>
+            <small>Private dining available</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="booking-form">
+        <h3>Make Your Reservation</h3>
+        <form id="reservationForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="datePicker">Date</label>
+              <input type="text" id="datePicker" class="form-control" placeholder="Select date" readonly>
+            </div>
+            <div class="form-group">
+              <label for="guestCount">Guests</label>
+              <select id="guestCount" class="form-control">
+                <option value="2">2 guests</option>
+                <option value="3">3 guests</option>
+                <option value="4">4 guests</option>
+                <option value="5">5 guests</option>
+                <option value="6">6 guests</option>
+                <option value="7">7 guests</option>
+                <option value="8">8 guests</option>
+                <option value="9">9 guests</option>
+                <option value="10">10 guests</option>
+                <option value="11">11 guests</option>
+                <option value="12">12 guests</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="specialRequests">Special Requests (Optional)</label>
+            <textarea id="specialRequests" class="form-control" placeholder="Birthday celebration, dietary restrictions, etc." rows="3"></textarea>
+          </div>
+        </form>
+      </section>
+      
+      <section class="slots">
+        <h4>Available Time Slots</h4>
+        <div id="loadingSlots" class="loading">Loading available times...</div>
+        <div id="slotsContainer" class="slot-list" style="display: none;"></div>
+        <div id="noSlots" class="no-slots" style="display: none;">
+          <i class="fas fa-calendar-times"></i>
+          <p>No available slots for this date. Please select another date.</p>
+        </div>
+      </section>
+      
+      <div class="booking-summary" id="bookingSummary" style="display: none;">
+        <h4>Booking Summary</h4>
+        <div class="summary-details">
+          <div class="summary-item">
+            <span class="label">Date:</span>
+            <span id="summaryDate" class="value"></span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Time:</span>
+            <span id="summaryTime" class="value"></span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Guests:</span>
+            <span id="summaryGuests" class="value"></span>
+          </div>
+        </div>
+      </div>
+      
+      <button id="confirmBtn" class="confirm-btn" disabled>
+        <i class="fas fa-calendar-check"></i>
+        Confirm Booking
+      </button>
+    </article>
+  </main>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h3>Booking Confirmed!</h3>
+      </div>
+      <div class="modal-body">
+        <p>Your reservation has been successfully confirmed.</p>
+        <div class="confirmation-details">
+          <div class="detail-row">
+            <strong>Confirmation Number:</strong>
+            <span id="confirmationNumber"></span>
+          </div>
+          <div class="detail-row">
+            <strong>Date & Time:</strong>
+            <span id="confirmationDateTime"></span>
+          </div>
+          <div class="detail-row">
+            <strong>Guests:</strong>
+            <span id="confirmationGuests"></span>
+          </div>
+        </div>
+        <p class="confirmation-note">
+          <i class="fas fa-info-circle"></i>
+          Please arrive 15 minutes before your reservation time.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button id="closeModal" class="btn-primary">Close</button>
+        <button id="newBooking" class="btn-secondary">Make Another Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <script type="module" src="/src/js/booking.js"></script>
+</body>
+</html>
